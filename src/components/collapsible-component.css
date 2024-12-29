@@ -1,0 +1,48 @@
+/* .collapsible-component{
+    margin: 5px 10px;
+}
+
+.collapsible-header{
+    display: flex;
+    padding: 5px;
+    background-color: #c5b2b2;
+    border-bottom: '1px solid #ccc';
+    text-align: left;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.collapsible-header section img{
+    width: 25px;
+    height: auto;
+    transition: transform 1s ease;
+} */
+
+.collapsible-component {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px 5px;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.collapsible-header img {
+  width: 20px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+
+.add-task{
+  text-align: center;
+}
+  

@@ -1,0 +1,32 @@
+.counter-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-box [class^="counter-btn-"] {
+    width: 20px;
+    height: 20px;
+    /* font-size: 15px; */
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 2px;
+    /* margin: 2px 5px; */
+}
+
+.counter-box .counter-btn-negative{
+    background-color: rgb(231, 148, 148);
+}
+
+.counter-box .counter-btn-positive{
+    background-color: rgb(43, 189, 109);
+}
+
+.counter-small-box {
+    width: 25px;
+    height: 20px;
+    text-align: center;
+    border: 1px solid black;
+    margin: 0 5px;
+}

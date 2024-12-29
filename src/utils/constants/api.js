@@ -1,0 +1,1 @@
+export const SHLOKAS_API = "/api/v1/spiritual/shlokas"

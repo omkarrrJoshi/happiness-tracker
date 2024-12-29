@@ -1,0 +1,55 @@
+.shloka-tracker{
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 5px 10px;
+    padding: 2px;
+    text-align: left;
+    justify-content: space-between;
+    /* border-bottom: 1px  solid black; */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.shloka-tracker-header{
+    display: flex;
+    align-items: center;
+    margin: 5px 10px;
+    padding: 2px;
+    text-align: center;
+    justify-content: space-between;
+}
+.shloka-tracker img{
+    width: 25px;
+    height: auto;
+}
+
+.daily_target{
+    text-align: center;
+}
+
+.shloka-tracker-list {
+    /* margin-left: 20px; */
+    /* text-align: center; */
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #4CAF50; /* Blue */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin: 10px;
+  }
+
+  .outer-loader{
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
