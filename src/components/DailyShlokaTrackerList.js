@@ -1,59 +1,54 @@
-import { useEffect, useRef, useState } from 'react';
 import './DailyShlokaTrackerList.css'
 
 import { CounterBox } from './counter-box';
-import { useSelector } from 'react-redux';
-import { EllipsisMenu } from './spiritual/ellipsis-menu';
+import { useDispatch, useSelector } from 'react-redux';
+import { getISTDate, showNotification } from '../utils/util';
+import { deleteShloka } from '../features/spiritual/shlokasSlice';
+import { LoadingOverlay } from './loading-overlay';
 
-export const ShlokaTracker = ({shloka, isMenuOpen, onMenuToggle}) =>{
-    const menuRef = useRef(null);
-    const menuButtonRef = useRef(null);
+export const ShlokaTracker = ({shloka}) =>{
+    const user = useSelector((state) => state.auth.user);
     
-    // Close the menu if clicked outside
-    const handleClickOutside = (e) => {
-        if (menuRef.current && !menuRef.current.contains(e.target) && !menuButtonRef.current.contains(e.target)) {
-          onMenuToggle(); // Close the menu when clicked outside
+    const dispatch = useDispatch();
+    const { isLoading, successMessage } = useSelector((state) => state.shlokas);
+    const queryParams = {
+        date: getISTDate(), 
+        shloka_id: shloka.shloka_id, 
+        user_id: user.uid
+    }
+    const handleDelete = async () => {
+        const result = await dispatch(deleteShloka({queryParams: queryParams, id: shloka.id}));
+        if (result.meta.requestStatus === 'fulfilled') {
+            showNotification(successMessage, 2000); // Show success message
         }
-    };
-  
-    // Listen for outside click to close the menu
-    useEffect(() => {
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-          document.removeEventListener('click', handleClickOutside);
-        };
-    }, []);
-
+    }
     return (
-        <article className='shloka-tracker'>
+        <>
+         <LoadingOverlay isLoading={isLoading} />
+         <article className='shloka-tracker'>
             <section className='col-6'>{shloka.name}</section>
-            <section className='col-3'> <CounterBox daily_rogreress={shloka.daily_progress}/></section>
+            <section className='col-3'> <CounterBox shloka={shloka}/></section>
             <section className='col-1 daily_target'>{shloka.daily_target}</section>
-            <section className='col-1' /*ref={menuButtonRef} onClick={onMenuToggle}*/>
+            <section className='col-1' onClick={handleDelete}>
                 <img 
-                    src='/svg-icons/ellipsis-vertical.svg' 
-                    alt='3 vericle dots'
+                    src='/svg-icons/delete.svg' 
+                    alt='delete icon'
                 />
             </section>
-            
-            {/* {isMenuOpen && <EllipsisMenu menuRef={menuRef} />} */}
         </article>
+        </>
+        
     );
 }
 
 export const ShlokaTrackerList = () => {
-    const [openMenuIndex, setOpenMenuIndex] = useState(null); // Track which shloka's menu is open
-
-    const handleMenuToggle = (index) => {
-        setOpenMenuIndex(openMenuIndex === index ? null : index); // Toggle menu for clicked shloka
-    };
     const shlokas = useSelector((state) => state.shlokas);
     const trackedShlokasList = shlokas.trackedShlokasList;
     return (
         <section className = "shloka-tracker-list">
             
             {
-                shlokas.isLoading && <div className='outer-loader'><div className='loader'></div></div>
+                !shlokas.loadedInitially && <div className='outer-loader'><div className='loader'></div></div>
             }
             {
                 (trackedShlokasList.length === 0 && !shlokas.isLoading) && <div>
@@ -73,8 +68,6 @@ export const ShlokaTrackerList = () => {
                             <ShlokaTracker 
                                 key={shloka.id} 
                                 shloka={shloka}
-                                isMenuOpen={openMenuIndex === index}
-                                onMenuToggle={() => handleMenuToggle(index)}
                             />
                         )}
                     </div>
