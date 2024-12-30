@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { deleteData, fetchData, postData, updateData } from "../../rest-apis";
-import { get_url } from "../../utils/util";
+import { get_url, showNotification } from "../../utils/util";
 import { SHLOKA_API, SHLOKAS_API } from "../../utils/constants/api";
 import { logoutUser } from "../authSlice";
 
@@ -40,7 +40,7 @@ export const shlokas = createSlice({
             if (shloka) {
                 // const previousProgress = shloka.daily_progress;
                 shloka.daily_progress = updated_daily_progress;
-
+                showNotification(`daily progress for ${shloka.name} updated to ${updated_daily_progress}`, 800);
                 // Trigger the API call after updating the state
                 const apiCall = async () => {
                     try {

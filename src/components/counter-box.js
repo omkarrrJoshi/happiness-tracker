@@ -13,6 +13,10 @@ export const CounterBox = ({shloka}) =>{
   }
 
   const udpateProgressSingleTime = (progress) => {
+    if (!document.getElementById('updated_progress').value || progress==0) {
+      alert("progress can't be empty or 0");
+      return; // Prevent form submission
+    }
     store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: progress}));
     toggleCounterModal();
   }
