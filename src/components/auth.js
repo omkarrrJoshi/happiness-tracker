@@ -1,10 +1,10 @@
 // import { auth } from "../config/firebase.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-// import { useState } from "react"
-
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import React, { useState } from 'react';
 import { auth, googleProvider } from "../config/firebase.js";
 import { useNavigate } from 'react-router-dom'; // or any router you use
+
+import './auth.css';
 
 function Auth() {
   const [email, setEmail] = useState('');
@@ -30,23 +30,28 @@ function Auth() {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/spiritual'); // Redirect after sign-in
     } catch (err) {
-      setError(err.message);
+      handleError(err.message);
     }
   };
 
   // Handle Google sign-in
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
       navigate("/spiritual") // Redirect after Google sign-in
     } catch (err) {
-      setError(err.message);
+      handleError(err.message);
     }
+  };
+
+  const handleError = (errorMessage) => {
+    alert(errorMessage); // Display alert for errors
+    setError(null); // Clear error after alert
   };
 
   return (
     <div className="auth-container">
-      <h2>{error ? `Error: ${error}` : 'Sign In / Sign Up'}</h2>
+      {/* <h2>{error ? `Error: ${error}` : 'Sign In / Sign Up'}</h2> */}
 
       <form>
         <input

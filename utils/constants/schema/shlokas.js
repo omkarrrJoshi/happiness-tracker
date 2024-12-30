@@ -13,4 +13,4 @@ export const DATE = 'date';
 //common
 export const CREATED_AT = 'created_at';
 export const UPDATED_AT = 'updated_at';
-export const DELTED_AT = 'deleted_at';
+export const DELETED_AT = 'deleted_at';

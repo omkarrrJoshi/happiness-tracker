@@ -1,13 +1,14 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import './modal-overlay.css'
 import { createShloka } from '../features/spiritual/shlokasSlice';
 import { useState } from 'react';
-import { CURRENT_DATE, CURRENT_USER_ID } from '../utils/util';
+import { getISTDate, showNotification } from '../utils/util';
 
 export const ModalOverlay = ({ toggleModal }) => {
+    const user = useSelector((state) => state.auth.user);
     const [formData, setFormData] = useState({
-        user_id: CURRENT_USER_ID,
-        date: CURRENT_DATE,
+        user_id: user.uid,
+        date: getISTDate(),
         daily_target: 1,
         name: '',
         link: '',
@@ -19,7 +20,6 @@ export const ModalOverlay = ({ toggleModal }) => {
     // Handle form field change
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log("name: ", name, " value: ", value)
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -27,7 +27,7 @@ export const ModalOverlay = ({ toggleModal }) => {
     };
 
      // Handle form submission
-     const handleSubmit = (e) => {
+     const handleSubmit = async(e) => {
         e.preventDefault();
         // Validate the name field before submitting
         if (!formData.name.trim() || !formData.daily_target) {
@@ -35,12 +35,12 @@ export const ModalOverlay = ({ toggleModal }) => {
             return; // Prevent form submission
         }
         // Dispatch the createShloka action with formData
-        dispatch(createShloka(formData));
-
+        await dispatch(createShloka(formData));
+        showNotification(`${formData.name.trim()} added successfully! You may close this window if you're done adding shlokas.`, 4000); 
         // Reset form fields after submission
         setFormData({
-            user_id: CURRENT_USER_ID,
-            date: CURRENT_DATE,
+            user_id: user.uid,
+            date: getISTDate(),
             daily_target: 1,
             name:'',
             link:'',
@@ -57,29 +57,9 @@ export const ModalOverlay = ({ toggleModal }) => {
     return (
       <div className="modal-overlay">
         <div className="modal">
+        <button className="modal-close" onClick={toggleModal}>×</button>
         <h3>Add New Shloka</h3>
         <form onSubmit={handleSubmit}>
-            {/* <div className="form-group">
-                <label htmlFor="userId">User ID</label>
-                <input 
-                type="text" 
-                id="userId" 
-                name="user_id" 
-                value={formData.user_id}
-                onChange={handleChange}
-                />
-            </div>
-
-            <div className="form-group">
-                <label htmlFor="date">Date</label>
-                <input 
-                type="text" 
-                id="date" 
-                name="date"
-                value={formData.date} 
-                onChange={handleChange}
-                />
-            </div> */}
             <div className="form-group">
                 <label htmlFor="name" className="required">Shloka Name</label>
                 <input 
@@ -130,7 +110,6 @@ export const ModalOverlay = ({ toggleModal }) => {
             </div>
 
             <button type="submit" className="btn">Submit</button>
-            <button type="button" className="btn" onClick={toggleModal}>Close</button>
         </form>
 
         </div>

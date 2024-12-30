@@ -3,6 +3,7 @@ import CollapsibleComponent from "../components/collapsible-component"
 import { ShlokaTrackerList } from "../components/DailyShlokaTrackerList"
 import { Header } from "../components/header"
 import { fetchTrackedShlokas } from "../features/spiritual/shlokasSlice"
+import { auth } from "../config/firebase"
 
 const Spiritual = () => {
     const renderedList = useSelector((state) => state.shlokas.renderedList);

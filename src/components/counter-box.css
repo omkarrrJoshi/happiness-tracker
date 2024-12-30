@@ -30,3 +30,25 @@
     border: 1px solid black;
     margin: 0 5px;
 }
+
+.note {
+    font-size: 0.8rem; /* Adjust size as needed */
+    color: #555; /* Optional: for a softer text color */
+  }
+
+.modal-note {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+    font-size: 0.6rem; /* Adjust size as needed */
+}
+
+/* Optional styling for the note */
+.modal-note p {
+    margin: 5px 0;
+}
+
+.modal-note strong {
+    font-weight: bold;
+    color: #333;
+}

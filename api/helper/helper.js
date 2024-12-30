@@ -20,4 +20,5 @@ export function attachTimestamp(body){
   const timestamp = formatDate();
   body.created_at = timestamp;
   body.updated_at = timestamp;
+  body.deleted_at = null;
 }

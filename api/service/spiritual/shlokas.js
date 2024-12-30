@@ -2,7 +2,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { DAILY_SHLOKAS_TRACKER, SHLOKAS } from "../../../utils/constants/collections.js";
 import { createEntityInDb } from "../../db/db.js";
 import { attachTimestamp, formatDate } from "../../helper/helper.js";
-import { DATE, USER_ID } from "../../../utils/constants/schema/shlokas.js";
+import { DATE, DELETED_AT, USER_ID } from "../../../utils/constants/schema/shlokas.js";
 import { db } from "../../../src/config/firebase.js";
 
 export async function createShloka(body){
@@ -51,7 +51,8 @@ export async function getTrackedShlokas(user_id, date){
     try{
         const shlokasQuery = query(
             collection(db, SHLOKAS),
-            where(USER_ID, '==', user_id)
+            where(USER_ID, '==', user_id),
+            where(DELETED_AT, '==', null) //TODO: make this as deleted_at <= current_date, delted_at > created_at, think on this if this is necessary?
         );
         const shlokasList = await getDocs(shlokasQuery);
         // Create an array of all shlokas
@@ -137,7 +138,7 @@ async function checkIfDailyShlokaPresent(user_id, date){
         // Check if there are any documents in the snapshot
         if (!dailyShlokasTrackerSnapshot.empty) {
             console.log(`Shloka exists for the given user: ${user_id} and date: ${date}`);
-            const data = dailyShlokasTrackerSnapshot.docs.map(doc => doc.data());
+            const data = dailyShlokasTrackerSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
             // A document exists for the given user and date
             return {
                 success: true, 
@@ -178,6 +179,7 @@ async function createDailyShlokas(user_id, date, shlokas){
             if(!docRef.success){
                 return docRef;
             }
+            dailyShlokaTracker[i].id = docRef.docId;
         }
         console.log(`Shlokas creation for the given user: ${user_id} and date: ${date} completed`);  
         return {success: true, data: dailyShlokaTracker};
@@ -200,7 +202,8 @@ function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas) {
   
       if (shloka) {
         return {
-          id: shloka.id,
+          id: tracked.id,
+          shloka_id: tracked.shloka_id,
           user_id: shloka.user_id,
           name: shloka.name,
           daily_target: shloka.daily_target,
