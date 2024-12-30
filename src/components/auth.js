@@ -67,20 +67,20 @@ function Auth() {
           placeholder="Password"
         />
         <div className="buttons">
-          <button type="submit" onClick={handleSignIn}>
-            Sign In
-          </button>
           <button type="submit" onClick={handleSignUp}>
             Sign Up
+          </button>
+          <button type="submit" onClick={handleSignIn}>
+            Sign In
           </button>
         </div>
       </form>
 
-      <div>
+      {/* <div>
         <button onClick={handleGoogleSignIn} className="google-signin">
           Sign in with Google
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -25,7 +25,6 @@
   
   /* Styling for the input fields */
   .auth-container form input {
-    width: 100%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
