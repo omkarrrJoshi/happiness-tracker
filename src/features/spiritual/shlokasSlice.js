@@ -38,15 +38,14 @@ export const shlokas = createSlice({
             // Optimistically update the local state
             const shloka = state.trackedShlokasList.find(s => s.id === id);
             if (shloka) {
-                const previousProgress = shloka.daily_progress;
+                // const previousProgress = shloka.daily_progress;
                 shloka.daily_progress = updated_daily_progress;
 
                 // Trigger the API call after updating the state
                 const apiCall = async () => {
                     try {
                         const response = await updateData(get_url(SHLOKA_API), id, queryParams, {daily_progress: shloka.daily_progress});
-                        console.log("response:", response);
-                        if (response.status != 200) {
+                        if (response.status !== 200) {
                             throw new Error('API update failed');
                         }
                     } catch (error) {
