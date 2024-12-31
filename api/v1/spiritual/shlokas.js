@@ -44,7 +44,8 @@ export default async function handler(req, res) {
                     {
                         message: response.message,
                         data: response.data,
-                        size: response.size
+                        size: response.size,
+                        date: date
                     }
                 );
             }else{

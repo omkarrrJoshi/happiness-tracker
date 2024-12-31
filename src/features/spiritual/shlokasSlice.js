@@ -4,6 +4,24 @@ import { get_url, showNotification } from "../../utils/util";
 import { SHLOKA_API, SHLOKAS_API } from "../../utils/constants/api";
 import { logoutUser } from "../authSlice";
 
+function sortShlokas(trackedShlokasList) {
+    return trackedShlokasList.sort((a, b) => {
+        // Step 1: Sort based on daily_progress >= daily_target
+        const aProgressComplete = a.daily_progress >= a.daily_target;
+        const bProgressComplete = b.daily_progress >= b.daily_target;
+
+        if (aProgressComplete !== bProgressComplete) {
+            // Move items with completed progress (true) to the end
+            return aProgressComplete ? 1 : -1;
+        }
+
+        // Step 2: If both are either complete or not, sort by created_at (ascending)
+        const aCreatedAt = a.created_at.seconds;
+        const bCreatedAt = b.created_at.seconds;
+        return aCreatedAt - bCreatedAt;
+    });
+}
+
 //GET API Action
 export const fetchTrackedShlokas = createAsyncThunk('fetchTrackedShlokas', async(args) => {
     const response = await fetchData(get_url(SHLOKAS_API), args);
@@ -58,8 +76,9 @@ export const shlokas = createSlice({
                     }
                 }
                 apiCall();
-            };
-                
+            }
+            //sorted list
+            state.trackedShlokasList = sortShlokas(state.trackedShlokasList);    
         },
         // rollbackDailyProgress(state, action) {
         //     const { id, previous_progress } = action.payload;
@@ -73,13 +92,14 @@ export const shlokas = createSlice({
         // GET API Reducers
         builder.addCase(fetchTrackedShlokas.pending, (state, action) => {
             state.isLoading = true;
-
         });
         builder.addCase(fetchTrackedShlokas.fulfilled, (state, action) => {
             state.isLoading = false;
             state.trackedShlokasList = action.payload.data;
             state.renderedList = true;
             state.loadedInitially = true
+            //sorted list
+            state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
         });
         builder.addCase(fetchTrackedShlokas.rejected, (state, action) => {
             state.error = action.payload;
@@ -94,6 +114,8 @@ export const shlokas = createSlice({
             state.isLoading = false;
             state.successMessage = "Shloka created successfully!";
             state.trackedShlokasList = [...(state.trackedShlokasList || []), action.payload.data]; // Add new shloka to the list
+            //sorted list
+            state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
         });
         builder.addCase(createShloka.rejected, (state, action) => {
             state.isLoading = false;
@@ -110,6 +132,8 @@ export const shlokas = createSlice({
             // remove shloka with id as given id from the list list
             const deletedShlokaId = action.payload.id;
             state.trackedShlokasList = state.trackedShlokasList.filter(shloka => shloka.id !== deletedShlokaId);
+            //sorted list
+            state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
         });
         builder.addCase(deleteShloka.rejected, (state, action) => {
             state.isLoading = false;

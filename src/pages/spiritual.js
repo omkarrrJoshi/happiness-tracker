@@ -5,6 +5,7 @@ import { Header } from "../components/header"
 import { fetchTrackedShlokas } from "../features/spiritual/shlokasSlice"
 import { auth } from "../config/firebase"
 import { WorkInProgress } from "../components/wip"
+import DateSelector from "../components/date-selector"
 
 const Spiritual = () => {
     const renderedList = useSelector((state) => state.shlokas.renderedList);
@@ -39,6 +40,7 @@ const Spiritual = () => {
         
         <div>
             <Header/>
+            <DateSelector />
             {types.map((type, index) => {
                 return <CollapsibleComponent 
                             key={index} 

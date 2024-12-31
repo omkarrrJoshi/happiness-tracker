@@ -4,6 +4,7 @@ import { createEntityInDb } from "../../db/db.js";
 import { attachTimestamp, formatDate } from "../../helper/helper.js";
 import { DATE, DELETED_AT, USER_ID } from "../../../utils/constants/schema/shlokas.js";
 import { db } from "../../../src/config/firebase.js";
+import { convertToIstTimestamp } from "../../utils/utils.js";
 
 export async function createShloka(body){
     try{
@@ -13,12 +14,13 @@ export async function createShloka(body){
         if(!shlokaResponse.success){
             return shlokaResponse;
         }
-
+        console.log("date:", date);
+        console.log("formated date:", convertToIstTimestamp(date))
         const dailyShlokaTrackerData = {
             user_id: body.user_id,
             shloka_id: shlokaResponse.docId,
             daily_progress: 0,
-            date: date,
+            date: convertToIstTimestamp(date),
         }
         attachTimestamp(dailyShlokaTrackerData);
         const dailyTrackedShlokaResponse = await createEntityInDb(
@@ -49,6 +51,7 @@ export async function createShloka(body){
 
 export async function getTrackedShlokas(user_id, date){
     try{
+        date = convertToIstTimestamp(date);
         const shlokasQuery = query(
             collection(db, SHLOKAS),
             where(USER_ID, '==', user_id),

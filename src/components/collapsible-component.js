@@ -12,13 +12,13 @@ const CollapsibleComponent = ({type}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleCollapse = () => {
-    const queryParams = {
-      user_id: user.uid,
-      date: getISTDate()
-    };
-    if(type.callApi){
-      dispatch(type.fetchTrackedList(queryParams));
-    }
+    // const queryParams = {
+    //   user_id: user.uid,
+    //   date: getISTDate()
+    // };
+    // if(type.callApi){
+    //   dispatch(type.fetchTrackedList(queryParams));
+    // }
     setIsExpanded(!isExpanded);
   };
 
@@ -49,7 +49,6 @@ const CollapsibleComponent = ({type}) => {
 
       {isModalOpen && (
         <div>
-          {console.log("Modal is open!")}
           <ModalOverlay toggleModal={toggleModal}/>
         </div>
       )}
