@@ -17,16 +17,31 @@ export const ShlokaTracker = ({shloka}) =>{
         user_id: user.uid
     }
     const handleDelete = async () => {
-        const result = await dispatch(deleteShloka({queryParams: queryParams, id: shloka.id}));
-        if (result.meta.requestStatus === 'fulfilled') {
-            showNotification(successMessage, 2000); // Show success message
+        const confirmDelete = window.confirm("Are you sure you want to delete this Shloka?");
+        if(confirmDelete){
+            const result = await dispatch(deleteShloka({queryParams: queryParams, id: shloka.id}));
+            if (result.meta.requestStatus === 'fulfilled') {
+                showNotification(successMessage, 2000); // Show success message
+            }
         }
     }
+
+    const isShlokaCompleted = shloka.daily_progress >= shloka.daily_target;
     return (
         <>
          <LoadingOverlay isLoading={isLoading} />
          <article className='shloka-tracker'>
-            <section className='col-6'>{shloka.name}</section>
+                <section className='col-1'>
+            {isShlokaCompleted && 
+                    
+                        <img 
+                        src='/svg-icons/completed.svg' 
+                        alt='completed'
+                    />
+            }
+           
+                </section>
+            <section className='col-7'>{shloka.name}</section>
             <section className='col-3'> <CounterBox shloka={shloka}/></section>
             <section className='col-1 daily_target'>{shloka.daily_target}</section>
             <section className='col-1' onClick={handleDelete}>
@@ -58,6 +73,7 @@ export const ShlokaTrackerList = () => {
             {(trackedShlokasList.length !== 0) &&
                 <div>
                     <div className='shloka-tracker-header'>
+                        <section className='col-1'></section>
                         <section className='col-6'>Name</section>
                         <section className='col-3'>Daily Progress</section>
                         <section className='col-1'>Target</section>

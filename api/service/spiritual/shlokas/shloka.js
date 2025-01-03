@@ -1,13 +1,14 @@
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../src/config/firebase.js";
 import { SHLOKAS, DAILY_SHLOKAS_TRACKER } from "../../../../utils/constants/collections.js";
+import { DAILY_PROGRESS } from "../../../../utils/constants/schema/shlokas.js";
 import { formatDate } from "../../../helper/helper.js";
 
 export async function updateShloka(id, userId, date, shlokaId, body){
 // 2 possibilities
     try{
         // 1st: body with only daily_progress
-        if(body.daily_progress){
+        if(DAILY_PROGRESS in body){
             // Reference the document in DAILY_SHLOKAS_TRACKER
             const trackedShlokaRef = doc(db, DAILY_SHLOKAS_TRACKER, id);
 

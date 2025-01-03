@@ -22,6 +22,15 @@ function sortShlokas(trackedShlokasList) {
     });
 }
 
+const showUpdateNotificaion = (shloka, previousProgress) => {
+    if(shloka.daily_progress >= shloka.daily_target && shloka.daily_progress > previousProgress){
+        showNotification(`Congratulations!!! \n You have completed todays target for ${shloka.name}`, 3000, "center")
+    }
+    else{
+        showNotification(`Daily progress for ${shloka.name} updated to ${shloka.daily_progress} from ${previousProgress}`, 2500);
+    }
+}
+
 //GET API Action
 export const fetchTrackedShlokas = createAsyncThunk('fetchTrackedShlokas', async(args) => {
     const response = await fetchData(get_url(SHLOKAS_API), args);
@@ -56,9 +65,9 @@ export const shlokas = createSlice({
             // Optimistically update the local state
             const shloka = state.trackedShlokasList.find(s => s.id === id);
             if (shloka) {
-                // const previousProgress = shloka.daily_progress;
+                const previousProgress = shloka.daily_progress;
                 shloka.daily_progress = updated_daily_progress;
-                showNotification(`daily progress for ${shloka.name} updated to ${updated_daily_progress}`, 800);
+                showUpdateNotificaion(shloka, previousProgress)
                 // Trigger the API call after updating the state
                 const apiCall = async () => {
                     try {

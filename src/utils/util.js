@@ -8,15 +8,15 @@ export function get_url(api){
     return API_HOST + api;
 }
 
-export const showNotification = (message, timer=3000) => {
+export const showNotification = (message, timer=3000, position="top-end") => {
     Swal.fire({
         text: message,
-        position: "top-end",
+        position: position,
         toast: true,
         timer: timer,
         timerProgressBar: true,
         icon: "success",
-        showConfirmButton: false,
+        showConfirmButton: true,
     });
 };
 
