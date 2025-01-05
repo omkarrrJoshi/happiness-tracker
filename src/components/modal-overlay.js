@@ -1,18 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './modal-overlay.css'
-import { createShloka } from '../features/spiritual/shlokasSlice';
+import { createShloka, updateShloka } from '../features/spiritual/shlokasSlice';
 import { useState } from 'react';
-import { getISTDate, showNotification } from '../utils/util';
+import { excludeFields, getISTDate, showNotification } from '../utils/util';
 
-export const ModalOverlay = ({ toggleModal }) => {
+export const ModalOverlay = ({ shloka, toggleModal }) => {
     const user = useSelector((state) => state.auth.user);
     const [formData, setFormData] = useState({
         user_id: user.uid,
         date: getISTDate(),
-        daily_target: 1,
-        name: '',
-        link: '',
-        description: '',
+        daily_target: shloka ? shloka.daily_target : 1,
+        name: shloka ? shloka.name : '',
+        link: shloka ? shloka.link : '',
+        description: shloka ? shloka.description : '',
     });
 
     const dispatch = useDispatch();
@@ -26,8 +26,8 @@ export const ModalOverlay = ({ toggleModal }) => {
         }));
     };
 
-     // Handle form submission
-     const handleSubmit = async(e) => {
+     // Handle form submission for creating shloka
+     const handleCreate = async(e) => {
         e.preventDefault();
         // Validate the name field before submitting
         if (!formData.name.trim() || !formData.daily_target) {
@@ -48,20 +48,35 @@ export const ModalOverlay = ({ toggleModal }) => {
         });
     };
 
-    // Reset success message after it's shown
-    // const handleResetMessage = () => {
-    //     dispatch(resetSuccessMessage());
-    // };
-
+    // Handle form submission for updating shloka
+    const handleUpdate = async(e) => {
+        console.log("forma data:", formData);
+        e.preventDefault();
+        // Validate the name field before submitting
+        if (!formData.name.trim() || !formData.daily_target) {
+            alert("Name or traget can't be empty");
+            return; // Prevent form submission
+        }
+        const queryParams = {
+            user_id: user.uid
+        }
+        const updatedBody = excludeFields(formData, ["user_id", "date"]);
+        // Dispatch the updateShloka action with formData
+        const result = await dispatch(updateShloka({shloka_id: shloka.shloka_id, queryParams: queryParams, updatedBody: updatedBody}));
+        if (result.meta.requestStatus === 'fulfilled') {
+            showNotification(`${formData.name.trim()} Updated successfully!`, 4000); 
+            toggleModal();
+        }
+    };
 
     return (
       <div className="modal-overlay">
         <div className="modal">
         <button className="modal-close" onClick={toggleModal}>×</button>
-        <h3>Add New Shloka</h3>
-        <form onSubmit={handleSubmit}>
+        <h3>{shloka ? "Update Shloka" : "Add New Shloka"}</h3>
+        <form onSubmit={shloka ? handleUpdate : handleCreate}>
             <div className="form-group">
-                <label htmlFor="name" className="required">Shloka Name</label>
+                <label htmlFor="name" className={shloka ? "optional" : "required"}>Shloka Name</label>
                 <input 
                 type="text" 
                 id="name" 
@@ -73,7 +88,7 @@ export const ModalOverlay = ({ toggleModal }) => {
             </div>
 
             <div className="form-group">
-                <label htmlFor="daily_target" className="required">Daily Target</label>
+                <label htmlFor="daily_target" className={shloka ? "optional" : "required"}>Daily Target</label>
                 <input 
                 type="number" 
                 id="daily_target" 
@@ -109,7 +124,7 @@ export const ModalOverlay = ({ toggleModal }) => {
                 />
             </div>
 
-            <button type="submit" className="btn">Submit</button>
+            <button type="submit" className="btn">{shloka ? "Update" : "Submit"}</button>
         </form>
 
         </div>

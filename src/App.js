@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Auth from "./components/auth";
 import { useSelector } from "react-redux";
 import { monitorAuthState } from './utils/authListener';
+import { Shloka } from './pages/spiritual/shloka';
 
 function App() {
     const user = useSelector((state) => state.auth.user); // From Redux
@@ -29,6 +30,10 @@ function App() {
                 <Route
                     path="/spiritual"
                     element={user ? <Spiritual /> : <Navigate to="/" />}
+                />
+                <Route 
+                    path="/spiritual/shloka/:shloka_id" 
+                    element={<Shloka />} 
                 />
             </Routes>
         </BrowserRouter>

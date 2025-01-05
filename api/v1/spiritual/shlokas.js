@@ -2,7 +2,7 @@ import { GET, POST } from "../../../utils/constants/rest_methods.js";
 import { createShloka, getTrackedShlokas } from "../../service/spiritual/shlokas.js";
 import { CREATE_SHLOKA } from "../../utils/constants/api_actions.js";
 import { validate } from "../../validations/request_body.js";
-import { nullValidation } from "../../validations/request_params.js";
+// import { nullValidation } from "../../validations/request_params.js";
 
 export default async function handler(req, res) {
     // create shloka
@@ -32,10 +32,10 @@ export default async function handler(req, res) {
 
     else if (req.method === GET){
         const { user_id, date } = req.query;
-        const isValid = nullValidation({user_id, date});
-        if (!isValid.valid) {
-            return res.status(400).json({ error: 'Invalid request params', details: isValid.message });
-        }
+        // const isValid = nullValidation({user_id, date});
+        // if (!isValid.valid) {
+        //     return res.status(400).json({ error: 'Invalid request params', details: isValid.message });
+        // }
 
         try{
             const response = await getTrackedShlokas(user_id, date);

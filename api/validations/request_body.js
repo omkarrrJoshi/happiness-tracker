@@ -1,14 +1,28 @@
-import { DAILY_TARGET, DATE, DESCRIPTION, LINK, NAME, USER_ID } from "../../utils/constants/schema/shlokas.js";
-import { CREATE_SHLOKA, OPTIONAL_FIELDS, REQUIRED_FIELDS } from "../utils/constants/api_actions.js";
+import { DAILY_PROGRESS, DAILY_TARGET, DATE, DESCRIPTION, LINK, NAME, USER_ID } from "../../utils/constants/schema/shlokas.js";
+import { CREATE_SHLOKA, OPTIONAL_FIELDS, REQUIRED_FIELDS, UPDATE_DAILY_SHLOKA, UPDATE_SHLOKA } from "../utils/constants/api_actions.js";
 
 const requestBodyValidationMap = new Map([
     [
         CREATE_SHLOKA, 
         new Map([
-            [REQUIRED_FIELDS, [USER_ID, DAILY_TARGET, NAME, DATE]],
-            [OPTIONAL_FIELDS, [LINK, DESCRIPTION]],
+          [REQUIRED_FIELDS, [USER_ID, DAILY_TARGET, NAME, DATE]],
+          [OPTIONAL_FIELDS, [LINK, DESCRIPTION]],
         ])
     ],
+    [
+      UPDATE_SHLOKA,
+      new Map([
+        [REQUIRED_FIELDS, []],
+        [OPTIONAL_FIELDS, [DAILY_TARGET, NAME, LINK, DESCRIPTION]],
+      ])
+    ],
+    [
+      UPDATE_DAILY_SHLOKA,
+      new Map([
+        [REQUIRED_FIELDS, [DAILY_PROGRESS]],
+        [OPTIONAL_FIELDS, []],
+      ])
+    ]
 ])
 
 export function validate(apiAction, body) {

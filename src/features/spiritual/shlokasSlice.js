@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { deleteData, fetchData, postData, updateData } from "../../rest-apis";
 import { get_url, showNotification } from "../../utils/util";
-import { SHLOKA_API, SHLOKAS_API } from "../../utils/constants/api";
+import { DAILY_SHLOKA_API, SHLOKA_API, SHLOKAS_API } from "../../utils/constants/api";
 import { logoutUser } from "../authSlice";
 
 function sortShlokas(trackedShlokasList) {
@@ -24,7 +24,7 @@ function sortShlokas(trackedShlokasList) {
 
 const showUpdateNotificaion = (shloka, previousProgress) => {
     if(shloka.daily_progress >= shloka.daily_target && shloka.daily_progress > previousProgress){
-        showNotification(`Congratulations!!! \n You have completed todays target for ${shloka.name}`, 3000, "center")
+        showNotification(`Congratulations!!! \n You have completed todays target for ${shloka.name}`, 3000, "center", "custom-toast-popup")
     }
     else{
         showNotification(`Daily progress for ${shloka.name} updated to ${shloka.daily_progress} from ${previousProgress}`, 2500);
@@ -49,6 +49,13 @@ export const deleteShloka = createAsyncThunk('deleteShloka', async (args) => {
     return response.json();
 });
 
+// UPDATE API Action
+export const updateShloka = createAsyncThunk('updateShloka', async (args) => {
+    const response = await updateData(get_url(SHLOKA_API), args.shloka_id, args.queryParams, args.updatedBody);
+    return response.json();
+});
+
+
 export const shlokas = createSlice({
     name: "shlokas",
     initialState : {
@@ -58,6 +65,7 @@ export const shlokas = createSlice({
         error: null,
         successMessage: null, // For handling POST success messages
         loadedInitially: false,
+        date: null
     },
     reducers :{
         updateDailyProgress(state, action){
@@ -71,31 +79,20 @@ export const shlokas = createSlice({
                 // Trigger the API call after updating the state
                 const apiCall = async () => {
                     try {
-                        const response = await updateData(get_url(SHLOKA_API), id, queryParams, {daily_progress: shloka.daily_progress});
+                        const response = await updateData(get_url(DAILY_SHLOKA_API), id, queryParams, {daily_progress: shloka.daily_progress});
                         if (response.status !== 200) {
                             throw new Error('API update failed');
                         }
                     } catch (error) {
                         console.log('error:', error);
-                        // Rollback to previous progress if API fails
-                        // shloka.daily_progress = previousProgress;
-                        //TODO: manage network failures
-                        alert(`Network error, please reload the page!!!, error: ${error.message}`)
+                        alert(`Error occured, please contact developer!!!, error: ${error.message}`)
                         console.error('API call failed, rollback to previous state', error);
                     }
                 }
                 apiCall();
             }
-            //sorted list
             state.trackedShlokasList = sortShlokas(state.trackedShlokasList);    
         },
-        // rollbackDailyProgress(state, action) {
-        //     const { id, previous_progress } = action.payload;
-        //     const shloka = state.trackedShlokasList.find(s => s.id === id);
-        //     if (shloka) {
-        //       shloka.daily_progress = previous_progress;
-        //     }
-        // },
     },
     extraReducers: (builder) => {
         // GET API Reducers
@@ -109,6 +106,7 @@ export const shlokas = createSlice({
             state.loadedInitially = true
             //sorted list
             state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
+            state.date = action.payload.date;
         });
         builder.addCase(fetchTrackedShlokas.rejected, (state, action) => {
             state.error = action.payload;
@@ -148,6 +146,30 @@ export const shlokas = createSlice({
             state.isLoading = false;
             state.error = action.error.message;
         });
+
+        // UPDATE API Reducers
+        builder.addCase(updateShloka.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(updateShloka.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.successMessage = "Shloka Updated successfully!";
+            // remove shloka with id as given id from the list list
+            const updatedShlokaId = action.payload.shloka_id;
+            const shloka = state.trackedShlokasList.find(shloka => shloka.shloka_id === updatedShlokaId);
+            const updatedData = action.payload.data;
+            shloka.name = updatedData.name;
+            shloka.daily_target = updatedData.daily_target;
+            shloka.description = updatedData.description;
+            shloka.link = updatedData.link;
+            //sorted list
+            state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
+        });
+        builder.addCase(updateShloka.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.error.message;
+        });
+
         // Reset shlokas state on logout
         builder.addCase(logoutUser, () => {
             return {

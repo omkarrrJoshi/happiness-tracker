@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-
+import "./util.css"
 
 const API_HOST = process.env.REACT_APP_API_HOST || "http://localhost:3000";
 export function get_url(api){
@@ -8,7 +8,7 @@ export function get_url(api){
     return API_HOST + api;
 }
 
-export const showNotification = (message, timer=3000, position="top-end") => {
+export const showNotification = (message, timer=3000, position="top-end", customClass="") => {
     Swal.fire({
         text: message,
         position: position,
@@ -17,6 +17,9 @@ export const showNotification = (message, timer=3000, position="top-end") => {
         timerProgressBar: true,
         icon: "success",
         showConfirmButton: true,
+        customClass: {
+            popup: customClass, // Add custom class for the popup
+        },
     });
 };
 
@@ -35,5 +38,7 @@ export const getISTDate = () => {
     return `${day}-${month}-${year}`;
 }
 
-export const CURRENT_USER_ID = "001";
-export const CURRENT_DATE = "25-12-2024";
+export const excludeFields = (obj, fieldsToExclude) => {
+    const { [fieldsToExclude[0]]: _, [fieldsToExclude[1]]: __, ...rest } = obj;
+    return rest;
+};
