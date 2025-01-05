@@ -49,7 +49,7 @@ const CollapsibleComponent = ({type}) => {
 
       {isModalOpen && (
         <div>
-          <ModalOverlay toggleModal={toggleModal}/>
+          <ModalOverlay toggleModal={toggleModal} shloka={""}/>
         </div>
       )}
     </article>

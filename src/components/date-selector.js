@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./date-selector.css";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "../redux/store";
@@ -10,9 +10,15 @@ const DateSelector = () => {
   const user = useSelector((state) => state.auth.user);
   const selectedDate = useSelector((state) => state.dateReducer.currentDate);
   const todaysDate = useSelector((state) => state.dateReducer.todaysDate);
+  const shlokasFetchedForTheDate = useSelector((state) => state.shlokas.date)
   const dispatch = useDispatch();
   
+  const hasMounted = useRef(false);
+  
   useEffect(() =>{
+    if(selectedDate === shlokasFetchedForTheDate){
+      return;
+    }
     const queryParams = {
       user_id: user.uid,
       date: selectedDate

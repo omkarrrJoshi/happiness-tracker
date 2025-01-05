@@ -1,0 +1,26 @@
+.custom-toast-popup {
+    background-color: #75d678 !important; /* Green background */
+    color: #000000 !important; /* White text */
+    border-radius: 8px !important; /* Rounded corners */
+    padding: 10px !important; /* Additional padding */
+    font-size: 1rem !important; /* Increase font size */
+}
+
+.custom-toast-popup .swal2-icon {
+    color: #000000 !important; /* Change the icon color */
+}
+
+.custom-toast-popup .swal2-title {
+    color: #000000 !important; /* Change title text color if used */
+}
+
+/* Change the color of the circle around the checkmark */
+.custom-toast-popup .swal2-success {
+    border-color: #000000 !important; /* Change circle border color */
+}
+
+/* Change the color of the checkmark itself */
+.custom-toast-popup .swal2-success-line-tip,
+.custom-toast-popup .swal2-success-line-long {
+    background-color: #000000 !important; /* Change checkmark color */
+}

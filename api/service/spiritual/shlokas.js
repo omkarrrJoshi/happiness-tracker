@@ -213,7 +213,8 @@ function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas) {
           link: shloka.link || null,
           created_at: shloka.created_at || null,
           updated_at: shloka.updated_at || null,
-          daily_progress: tracked.daily_progress
+          daily_progress: tracked.daily_progress,
+          description: shloka.description
         };
       }
   
