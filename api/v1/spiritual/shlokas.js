@@ -1,7 +1,7 @@
 import { GET, POST } from "../../../utils/constants/rest_methods.js";
-import { createShloka, getTrackedShlokas } from "../../service/spiritual/shlokas.js";
-import { CREATE_SHLOKA } from "../../utils/constants/api_actions.js";
-import { validate } from "../../validations/request_body.js";
+import { createShloka, getTrackedShlokas } from "../../../backend/service/spiritual/shlokas.js";
+import { CREATE_SHLOKA } from "../../../backend/utils/constants/api_actions.js";
+import { validate } from "../../../backend/validations/request_body.js";
 // import { nullValidation } from "../../validations/request_params.js";
 
 export default async function handler(req, res) {

@@ -4,7 +4,7 @@ import { createEntityInDb } from "../../db/db.js";
 import { attachTimestamp, formatDate } from "../../helper/helper.js";
 import { DATE, DELETED_AT, USER_ID } from "../../../utils/constants/schema/shlokas.js";
 import { db } from "../../../src/config/firebase.js";
-import { convertToIstTimestamp } from "../../utils/utils.js";
+import { convertToIstTimestamp } from "../../../backend/utils/utils.js";
 
 export async function createShloka(body){
     try{

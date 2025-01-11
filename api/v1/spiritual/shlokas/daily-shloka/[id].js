@@ -1,8 +1,7 @@
 import { DELETE, PUT } from "../../../../../utils/constants/rest_methods.js";
-import { updateDailyShloka } from "../../../../service/spiritual/shlokas/daily_shloka.js";
-import { deleteShloka, updateShloka } from "../../../../service/spiritual/shlokas/shloka.js";
-import { UPDATE_DAILY_SHLOKA } from "../../../../utils/constants/api_actions.js";
-import { validate } from "../../../../validations/request_body.js";
+import { updateDailyShloka } from "../../../../../backend/service/spiritual/shlokas/daily_shloka.js";
+import { UPDATE_DAILY_SHLOKA } from "../../../../../backend/utils/constants/api_actions.js";
+import { validate } from "../../../../../backend/validations/request_body.js";
 // import { nullValidation } from "../../../../validations/request_params.js";
 
 export default async function handler(req, res) {
