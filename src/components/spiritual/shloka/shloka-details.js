@@ -19,8 +19,7 @@ export const ShlokaDetails = ({ shloka_id }) => {
     };
     dispatch(fetchTrackedShlokas(queryParams));
   }
-  console.log("trackedShlokasList:", trackedShlokasList)
-  console.log("shloka_id:", shloka_id)
+  
   const shloka = trackedShlokasList.find(shloka => shloka.shloka_id === shloka_id)
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);

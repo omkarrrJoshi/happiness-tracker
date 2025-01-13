@@ -6,6 +6,7 @@ import Auth from "./components/auth";
 import { useSelector } from "react-redux";
 import { monitorAuthState } from './utils/authListener';
 import { Shloka } from './pages/spiritual/shloka';
+import { Parayana } from './pages/spiritual/parayana';
 
 function App() {
     const user = useSelector((state) => state.auth.user); // From Redux
@@ -34,6 +35,11 @@ function App() {
                 <Route 
                     path="/spiritual/shloka/:shloka_id" 
                     element={<Shloka />} 
+                />
+
+                <Route 
+                    path="/spiritual/parayana/:parayana_id" 
+                    element={<Parayana />} 
                 />
             </Routes>
         </BrowserRouter>

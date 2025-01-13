@@ -1,5 +1,5 @@
-import { DAILY_PROGRESS, DAILY_TARGET, DATE, DESCRIPTION, LINK, NAME, USER_ID } from "../../utils/constants/schema/shlokas.js";
-import { CREATE_SHLOKA, OPTIONAL_FIELDS, REQUIRED_FIELDS, UPDATE_DAILY_SHLOKA, UPDATE_SHLOKA } from "../utils/constants/api_actions.js";
+import { COMPLETED, DAILY_PROGRESS, DAILY_TARGET, DATE, DESCRIPTION, LINK, MONTHLY_TARGET, NAME, PARAYANA_ID, TOTAL_SHLOKAS, USER_ID } from "../../utils/constants/schema/shlokas.js";
+import { CREATE_PARAYANA, CREATE_PARAYANA_CHAPTER, CREATE_SHLOKA, OPTIONAL_FIELDS, REQUIRED_FIELDS, UPDATE_DAILY_SHLOKA, UPDATE_PARAYANA_CHAPTER_TRACKER, UPDATE_SHLOKA } from "../utils/constants/api_actions.js";
 
 const requestBodyValidationMap = new Map([
     [
@@ -22,7 +22,30 @@ const requestBodyValidationMap = new Map([
         [REQUIRED_FIELDS, [DAILY_PROGRESS]],
         [OPTIONAL_FIELDS, []],
       ])
-    ]
+    ],
+
+    //parayanas
+    [
+      CREATE_PARAYANA,
+      new Map([
+        [REQUIRED_FIELDS, [USER_ID, MONTHLY_TARGET, NAME, DATE]],
+        [OPTIONAL_FIELDS, []],
+      ])
+    ],
+    [
+      CREATE_PARAYANA_CHAPTER,
+      new Map([
+        [REQUIRED_FIELDS, [PARAYANA_ID, USER_ID, NAME, DATE]],
+        [OPTIONAL_FIELDS, [LINK, DESCRIPTION, TOTAL_SHLOKAS]],
+      ])
+    ],
+    [
+      UPDATE_PARAYANA_CHAPTER_TRACKER,
+      new Map([
+        [REQUIRED_FIELDS, [COMPLETED]],
+        [OPTIONAL_FIELDS, []],
+      ])
+    ],
 ])
 
 export function validate(apiAction, body) {

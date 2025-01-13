@@ -9,7 +9,9 @@ export const CounterBox = ({shloka}) =>{
     store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress + 1}));
   }
   const decrement = () => {
-    store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress - 1}));
+    if(shloka.daily_progress > 0){
+      store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress - 1}));
+    }
   }
 
   const udpateProgressSingleTime = (progress) => {
