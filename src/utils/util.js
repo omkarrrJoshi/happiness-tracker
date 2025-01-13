@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import "./util.css"
 
-const API_HOST = "http://192.168.1.5:3000";
+const API_HOST = process.env.REACT_APP_API_HOST || "http://localhost:3000";
 export function get_url(api){
     console.log("env host:", process.env.REACT_APP_API_HOST)
     return API_HOST + api;
