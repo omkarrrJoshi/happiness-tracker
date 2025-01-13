@@ -1,0 +1,73 @@
+/* Main container for the entire tracker */
+.parayana-tracker-container {
+  margin: 20px; /* Add space around the container */
+  padding: 15px; /* Inner padding for better readability */
+  background-color: #f9f9f9; /* Light background for distinction */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Header section */
+.parayana-header {
+  margin-bottom: 15px; /* Space below the header */
+}
+
+.parayana-header h2 {
+  margin: 0; /* Remove default margins */
+  font-size: 18px; /* Font size for clarity */
+  color: #333; /* Dark text color */
+}
+
+/* Chapter header for the action bar */
+.chapter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px; /* Space below the chapter header */
+}
+
+.chapter-header .col-8 {
+  font-weight: bold; /* Bold the label */
+}
+
+.chapter-header .col-4 button {
+  padding: 6px 12px; /* Adjust button padding */
+  background-color: #007bff; /* Blue button background */
+  color: #fff; /* White text */
+  border: none;
+  border-radius: 4px; /* Rounded corners for the button */
+  cursor: pointer;
+}
+
+.chapter-header .col-4 button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Grouped chapters */
+.grouped-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between chapter groups */
+}
+
+/* Individual chapter group */
+.chapter-group {
+  padding: 10px 0; /* Vertical padding for each group */
+  border-top: 1px solid #ddd; /* Add a divider line */
+}
+
+.chapter-group:first-child {
+  border-top: none; /* Remove divider for the first group */
+}
+
+/* Responsiveness */
+@media screen and (max-width: 480px) {
+  .parayana-tracker-container {
+    margin: 10px;
+    padding: 10px;
+  }
+
+  .chapter-header .col-4 button {
+    padding: 5px 10px; /* Adjust button padding for smaller screens */
+  }
+}

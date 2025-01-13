@@ -17,4 +17,36 @@ export function convertToIstTimestamp(dateStr) {
   const firestoreTimestamp = Timestamp.fromDate(dateInKolkata);
 
   return firestoreTimestamp;
+}
+
+export function getMonthFromDate(dateString) {
+  // Split the date string by the '-' delimiter
+  const parts = dateString.split('-');
+  
+  // Extract the month part (second element in the array)
+  const month = parts[1];
+  return parseInt(month, 10); // Converts to number
+}
+
+export async function handleServiceCallAndWriteResponse(serviceFunction, res, errorMessage) {
+  try {
+      const response = await serviceFunction();
+      if (response.success) {
+          res.status(200).json({
+              message: response.message,
+              data: response.data,
+          });
+      } else {
+          const error_code = response.error_code || 500;
+          res.status(error_code).json({
+              message: errorMessage,
+              error: response.message,
+          });
+      }
+  } catch (error) {
+      res.status(500).json({
+          message: errorMessage,
+          error: error.message,
+      });
   }
+}

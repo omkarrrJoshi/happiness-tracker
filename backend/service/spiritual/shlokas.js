@@ -14,8 +14,6 @@ export async function createShloka(body){
         if(!shlokaResponse.success){
             return shlokaResponse;
         }
-        console.log("date:", date);
-        console.log("formated date:", convertToIstTimestamp(date))
         const dailyShlokaTrackerData = {
             user_id: body.user_id,
             shloka_id: shlokaResponse.docId,

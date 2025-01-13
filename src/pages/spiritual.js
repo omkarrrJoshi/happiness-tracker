@@ -6,6 +6,7 @@ import { fetchTrackedShlokas } from "../features/spiritual/shlokasSlice"
 import { auth } from "../config/firebase"
 import { WorkInProgress } from "../components/wip"
 import DateSelector from "../components/date-selector"
+import { ParayanaTrackerList } from "../components/spiritual/parayanas/parayanaTrackerList"
 
 const Spiritual = () => {
     const renderedList = useSelector((state) => state.shlokas.renderedList);
@@ -13,26 +14,18 @@ const Spiritual = () => {
         {
             name: "Shlokas",
             expandableComponent: ShlokaTrackerList,
-            fetchTrackedList: fetchTrackedShlokas,
-            callApi: !renderedList,
         },
         {
-            name: "Parayan",
-            expandableComponent: WorkInProgress,
-            fetchTrackedList: fetchTrackedShlokas,
-            callApi: !renderedList,
+            name: "Parayanas",
+            expandableComponent: ParayanaTrackerList,
         },
         {
             name: "Tasks",
             expandableComponent: WorkInProgress,
-            fetchTrackedList: fetchTrackedShlokas,
-            callApi: !renderedList,
         },
         {
             name: "Namsmaran",
             expandableComponent: WorkInProgress,
-            fetchTrackedList: fetchTrackedShlokas,
-            callApi: !renderedList,
         },
     ]
 

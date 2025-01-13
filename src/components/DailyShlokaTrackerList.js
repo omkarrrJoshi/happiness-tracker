@@ -47,7 +47,7 @@ export const ShlokaTracker = ({shloka}) =>{
                         />
                 }
             </section>
-            <section className='col-7' onClick={handleNavigation} style={{ cursor: 'pointer' }}>{shloka.name}</section>
+            <section className='col-6' onClick={handleNavigation} style={{ cursor: 'pointer' }}>{shloka.name}</section>
             <section className='col-3'> <CounterBox shloka={shloka}/></section>
             <section className='col-1 daily_target'>{shloka.daily_target}</section>
             <section className='col-1' onClick={handleDelete}>

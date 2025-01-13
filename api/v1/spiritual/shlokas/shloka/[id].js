@@ -2,20 +2,17 @@ import { DELETE, PUT } from "../../../../../utils/constants/rest_methods.js";
 import { deleteShloka, updateShloka } from "../../../../../backend/service/spiritual/shlokas/shloka.js";
 import { UPDATE_SHLOKA } from "../../../../../backend/utils/constants/api_actions.js";
 import { validate } from "../../../../../backend/validations/request_body.js";
-// import { nullValidation } from "../../../../validations/request_params.js";
+import { nullValidation } from "../../../../../backend/validations/request_params.js";
 
 export default async function handler(req, res) {
     // update shloka
     if (req.method === PUT) {
         const body = req.body;
         const { id, user_id, shloka_id, date } = req.query;
-        // const isValid = nullValidation({id, user_id});
+        const isValid = nullValidation({id, user_id});
         const isValidBody = validate(UPDATE_SHLOKA, body);
-        // if (!isValid.valid || !isValidBody.valid) {
-        //     return res.status(400).json({ error: 'Invalid request params', details: isValid.message || isValidBody.message});
-        // }
-        if (!isValidBody.valid) {
-            return res.status(400).json({ error: 'Invalid request params', details: isValidBody.message});
+        if (!isValid.valid || !isValidBody.valid) {
+            return res.status(400).json({ error: 'Invalid request params', details: isValid.message || isValidBody.message});
         }
         try{
             const response = await updateShloka(id, user_id, body);

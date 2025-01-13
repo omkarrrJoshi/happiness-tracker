@@ -10,6 +10,25 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
+.shloka-tracker {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+}
+
+.shloka-tracker .col-1,
+.shloka-tracker .col-3,
+.shloka-tracker .daily_target {
+  display: flex; /* Enables flexbox */
+  align-items: center; /* Vertically center the content */
+  justify-content: center; /* Horizontally center the content */
+  text-align: center; /* For inline elements like text */
+}
+
+.shloka-tracker .col-7 {
+  /* Optional: Keep default alignment or customize as needed */
+  text-align: left; /* Default left alignment for text */
+}
+
 .shloka-tracker-header{
     display: flex;
     align-items: center;

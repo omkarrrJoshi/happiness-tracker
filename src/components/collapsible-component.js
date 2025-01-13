@@ -1,24 +1,14 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; 
 
 import './collapsible-component.css'
 import { ModalOverlay } from './modal-overlay';
-import { getISTDate } from '../utils/util';
+import { ParayanasModalOverlay } from './spiritual/parayanas/parayanaModalOverlay';
 
 const CollapsibleComponent = ({type}) => {
-  const user = useSelector((state) => state.auth.user);
-  const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleCollapse = () => {
-    // const queryParams = {
-    //   user_id: user.uid,
-    //   date: getISTDate()
-    // };
-    // if(type.callApi){
-    //   dispatch(type.fetchTrackedList(queryParams));
-    // }
     setIsExpanded(!isExpanded);
   };
 
@@ -49,7 +39,8 @@ const CollapsibleComponent = ({type}) => {
 
       {isModalOpen && (
         <div>
-          <ModalOverlay toggleModal={toggleModal} shloka={""}/>
+          {type.name === "Shlokas" && <ModalOverlay toggleModal={toggleModal} shloka={""}/> }
+          {type.name === "Parayanas" && <ParayanasModalOverlay toggleModal={toggleModal} />}
         </div>
       )}
     </article>

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { store } from "../redux/store";
 import { setDate } from "../features/dateSlice";
 import { fetchTrackedShlokas } from "../features/spiritual/shlokasSlice";
+import { fetchParayanasTracker } from "../features/spiritual/parayanasSlice";
 
 const DateSelector = () => {
 //   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -24,6 +25,7 @@ const DateSelector = () => {
       date: selectedDate
     };
     dispatch(fetchTrackedShlokas(queryParams));
+    dispatch(fetchParayanasTracker(queryParams));
   }, [selectedDate]);
 
   const reverseDate = (date) => {
