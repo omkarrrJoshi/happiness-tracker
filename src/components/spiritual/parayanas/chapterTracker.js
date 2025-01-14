@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { showNotification } from "../../../utils/util";
 
 
-export const ChapterTracker = ({ heading, chapters, parayanaId }) => {
+export const ChapterTracker = ({ parayana, parayanaId }) => {
   const user = useSelector((state) => state.auth.user); 
   const toggleChapter = (chapterName, id, completed) => {
     store.dispatch(updateChapterCompletion({parayanaId: parayanaId, chapterId: id, completed: completed, user_id: user.id}));
@@ -17,11 +17,11 @@ export const ChapterTracker = ({ heading, chapters, parayanaId }) => {
   return (
     <div className="chapter-tracker">
       <div className="tracker-heading">
-        <h2>{heading}</h2>
+        <h2>Parayan {parayana.progress_id}</h2>
       </div>
       <div className="chapter-list">
         {
-          chapters.map((chapter) => {
+          parayana.chapters.map((chapter) => {
             return (
               <TodoItem 
                 key={chapter.id}
