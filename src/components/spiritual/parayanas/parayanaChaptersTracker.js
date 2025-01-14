@@ -19,7 +19,7 @@ export const ParayanaChaptersTracker = ({parayana}) => {
   const error = parayanas_tracker.error;
   const dispatch = useDispatch();
 
-  
+
   if(!parayanas_tracker.rendered){
     console.log("yayyyyy");
     const queryParams = {
@@ -45,7 +45,39 @@ export const ParayanaChaptersTracker = ({parayana}) => {
       return acc;
     }, {});
   };
-  
+
+  const sortParayanas = (groupedByProgress) => {
+    return Object.entries(groupedByProgress)
+      .map(([progress_id, chapters]) => {
+        // Sort chapters within each process by `completed` and `created_at`
+        const sortedChapters = chapters.sort((a, b) => {
+          if (a.completed === b.completed) {
+            // If `completed` is the same, sort by `created_at`
+            return a.created_at.seconds - b.created_at.seconds;
+          }
+          // Completed chapters go to the end
+          return a.completed - b.completed;
+        });
+
+        // Determine if all chapters in this process are completed
+        const allCompleted = sortedChapters.every((chapter) => chapter.completed);
+
+        return {
+          progress_id,
+          chapters: sortedChapters,
+          allCompleted,
+        };
+      })
+      .sort((a, b) => {
+        if (a.allCompleted === b.allCompleted) {
+          // If allCompleted status is the same, sort by progress_id
+          return a.progress_id - b.progress_id;
+        }
+        // Processes with all chapters completed go to the end
+        return a.allCompleted - b.allCompleted;
+      });
+  };
+
   return (
     <div className="parayana-tracker-container">
       <LoadingOverlay isLoading={loading} />
@@ -65,9 +97,9 @@ export const ParayanaChaptersTracker = ({parayana}) => {
         </div>
 
         <div className="grouped-chapters">
-          {Object.entries(groupedByProgressId(data.tracked_parayana_chapters)).map(([key, value]) => (
+          {Object.entries(sortParayanas(groupedByProgressId(data.tracked_parayana_chapters))).map(([key, value]) => (
             <div key={key} className="chapter-group">
-              <ChapterTracker chapters={value} heading={`Parayana: ${key}`} parayanaId={parayana.id} />
+              <ChapterTracker parayanas={value} parayanaId={parayana.id} />
             </div>
           ))}
         </div>
