@@ -99,7 +99,7 @@ export const ParayanaChaptersTracker = ({parayana}) => {
         <div className="grouped-chapters">
           {Object.entries(sortParayanas(groupedByProgressId(data.tracked_parayana_chapters))).map(([key, value]) => (
             <div key={key} className="chapter-group">
-              <ChapterTracker parayanas={value} parayanaId={parayana.id} />
+              <ChapterTracker parayana={value} parayanaId={parayana.id} />
             </div>
           ))}
         </div>
