@@ -31,6 +31,10 @@
     margin: 0 5px;
 }
 
+.namsmaran-counter-small-box{
+  width: 60px;
+}
+
 .note {
     font-size: 0.8rem; /* Adjust size as needed */
     color: #555; /* Optional: for a softer text color */

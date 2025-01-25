@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin: 5px 10px;
+    margin: 10px 10px;
     padding: 2px;
     text-align: left;
     justify-content: space-between;
@@ -13,6 +13,7 @@
 .shloka-tracker {
   display: flex;
   align-items: center; /* Vertically center the items */
+  height: 40px;
 }
 
 .shloka-tracker .col-1,

@@ -33,14 +33,15 @@ const CollapsibleComponent = ({type}) => {
 
       {isExpanded && (
         <div className={`collapsible-content ${isExpanded ? "expanded" : ""}`}>
-          <type.expandableComponent />
+          <type.expandableComponent {...type.props}/>
         </div>
       )}
 
       {isModalOpen && (
         <div>
-          {type.name === "Shlokas" && <ModalOverlay toggleModal={toggleModal} shloka={""}/> }
+          {type.name === "Shlokas" && <ModalOverlay toggleModal={toggleModal} shloka={""} type={"Shloka"}/> }
           {type.name === "Parayanas" && <ParayanasModalOverlay toggleModal={toggleModal} />}
+          {type.name === "Namsmaran" && <ModalOverlay toggleModal={toggleModal} shloka={""} type={"Namsmaran"}/> }
         </div>
       )}
     </article>

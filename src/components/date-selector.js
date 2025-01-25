@@ -5,6 +5,8 @@ import { store } from "../redux/store";
 import { setDate } from "../features/dateSlice";
 import { fetchTrackedShlokas } from "../features/spiritual/shlokasSlice";
 import { fetchParayanasTracker } from "../features/spiritual/parayanasSlice";
+import { NAMSMARAN, SHLOKA } from "../utils/constants/constants";
+import { fetchTrackedNamsmarans } from "../features/spiritual/namsmaranSlice";
 
 const DateSelector = () => {
 //   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -24,8 +26,9 @@ const DateSelector = () => {
       user_id: user.uid,
       date: selectedDate
     };
-    dispatch(fetchTrackedShlokas(queryParams));
+    dispatch(fetchTrackedShlokas({...queryParams, type: SHLOKA}));
     dispatch(fetchParayanasTracker(queryParams));
+    dispatch(fetchTrackedNamsmarans({...queryParams, type: NAMSMARAN}));
   }, [selectedDate]);
 
   const reverseDate = (date) => {

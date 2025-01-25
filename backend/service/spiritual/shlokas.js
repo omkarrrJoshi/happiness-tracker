@@ -89,7 +89,7 @@ export async function getTrackedShlokas(user_id, date, type){
             return trackedShlokasResp;
         }
         const trackedShlokas = trackedShlokasResp.data;
-        const mergedShlokas = mergeShlokasAndTrackedShlokas(shlokas, trackedShlokas);
+        const mergedShlokas = mergeShlokasAndTrackedShlokas(shlokas, trackedShlokas, type);
         return {
             success: true,
             message: "tracked shlokas fetched successfully!",
@@ -211,7 +211,7 @@ async function createDailyShlokas(user_id, date, shlokas){
     }
 }
 
-function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas) {
+function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas, type) {
     // Iterate over tracked_shlokas to create the merged result
     const mergedData = trackked_shlokas.map(tracked => {
       // Find the corresponding shloka from shloks
@@ -228,7 +228,8 @@ function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas) {
           created_at: shloka.created_at || null,
           updated_at: shloka.updated_at || null,
           daily_progress: tracked.daily_progress,
-          description: shloka.description
+          description: shloka.description,
+          type: type
         };
       }
   

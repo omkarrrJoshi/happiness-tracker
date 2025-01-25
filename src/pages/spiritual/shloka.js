@@ -8,7 +8,7 @@ export const Shloka = () => {
     return (
         <div>
             <Header/>
-            <ShlokaDetails shloka_id={shloka.shloka_id} />
+            <ShlokaDetails shloka_id={shloka.shloka_id} type={shloka.type}/>
         </div>
     )
 }

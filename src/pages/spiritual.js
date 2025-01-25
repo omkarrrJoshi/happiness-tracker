@@ -7,6 +7,7 @@ import { auth } from "../config/firebase"
 import { WorkInProgress } from "../components/wip"
 import DateSelector from "../components/date-selector"
 import { ParayanaTrackerList } from "../components/spiritual/parayanas/parayanaTrackerList"
+import { NAMSMARAN, SHLOKA } from "../utils/constants/constants"
 
 const Spiritual = () => {
     const renderedList = useSelector((state) => state.shlokas.renderedList);
@@ -14,18 +15,17 @@ const Spiritual = () => {
         {
             name: "Shlokas",
             expandableComponent: ShlokaTrackerList,
+            props: {type: SHLOKA}
         },
         {
             name: "Parayanas",
             expandableComponent: ParayanaTrackerList,
-        },
-        {
-            name: "Tasks",
-            expandableComponent: WorkInProgress,
+            props: {}
         },
         {
             name: "Namsmaran",
-            expandableComponent: WorkInProgress,
+            expandableComponent: ShlokaTrackerList,
+            props: {type: NAMSMARAN}
         },
     ]
 

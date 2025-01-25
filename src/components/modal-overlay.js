@@ -3,8 +3,10 @@ import './modal-overlay.css'
 import { createShloka, updateShloka } from '../features/spiritual/shlokasSlice';
 import { useState } from 'react';
 import { excludeFields, getISTDate, showNotification } from '../utils/util';
+import { NAMSMARAN, SHLOKA } from '../utils/constants/constants';
+import { createNamsmaran, updateNamsmaran } from '../features/spiritual/namsmaranSlice';
 
-export const ModalOverlay = ({ shloka, toggleModal }) => {
+export const ModalOverlay = ({ shloka, toggleModal, type }) => {
     const user = useSelector((state) => state.auth.user);
     const [formData, setFormData] = useState({
         user_id: user.uid,
@@ -13,6 +15,7 @@ export const ModalOverlay = ({ shloka, toggleModal }) => {
         name: shloka ? shloka.name : '',
         link: shloka ? shloka.link : '',
         description: shloka ? shloka.description : '',
+        type: type.toLowerCase(),
     });
 
     const dispatch = useDispatch();
@@ -35,8 +38,15 @@ export const ModalOverlay = ({ shloka, toggleModal }) => {
             return; // Prevent form submission
         }
         // Dispatch the createShloka action with formData
-        await dispatch(createShloka(formData));
-        showNotification(`${formData.name.trim()} added successfully! You may close this window if you're done adding shlokas.`, 4000); 
+        if(type.toLowerCase() === SHLOKA){
+          await dispatch(createShloka(formData));
+        }else if(type.toLowerCase() === NAMSMARAN){
+          await dispatch(createNamsmaran(formData));
+        }else{
+          alert('Shloka type not valid!');
+          return; // Prevent form submission
+        }
+        showNotification(`${formData.name.trim()} added successfully! You may close this window if you're done adding ${type}.`, 4000); 
         // Reset form fields after submission
         setFormData({
             user_id: user.uid,
@@ -45,12 +55,12 @@ export const ModalOverlay = ({ shloka, toggleModal }) => {
             name:'',
             link:'',
             description: '',
+            type: type.toLowerCase(),
         });
     };
 
     // Handle form submission for updating shloka
     const handleUpdate = async(e) => {
-        console.log("forma data:", formData);
         e.preventDefault();
         // Validate the name field before submitting
         if (!formData.name.trim() || !formData.daily_target) {
@@ -60,9 +70,10 @@ export const ModalOverlay = ({ shloka, toggleModal }) => {
         const queryParams = {
             user_id: user.uid
         }
-        const updatedBody = excludeFields(formData, ["user_id", "date"]);
-        // Dispatch the updateShloka action with formData
-        const result = await dispatch(updateShloka({shloka_id: shloka.shloka_id, queryParams: queryParams, updatedBody: updatedBody}));
+        const updatedBody = excludeFields(formData, ["user_id", "date", "type"]);
+        // Dispatch the updateShloka/updateNamsmaran action with formData
+        const action = type.toLowerCase() === NAMSMARAN ? updateNamsmaran: updateShloka;
+        const result = await dispatch(action({shloka_id: shloka.shloka_id, queryParams: queryParams, updatedBody: updatedBody}));
         if (result.meta.requestStatus === 'fulfilled') {
             showNotification(`${formData.name.trim()} Updated successfully!`, 4000); 
             toggleModal();
@@ -73,15 +84,15 @@ export const ModalOverlay = ({ shloka, toggleModal }) => {
       <div className="modal-overlay">
         <div className="modal">
         <button className="modal-close" onClick={toggleModal}>×</button>
-        <h3>{shloka ? "Update Shloka" : "Add New Shloka"}</h3>
+        <h3>{shloka ? `Update ${type}` : `Add New ${type}`}</h3>
         <form onSubmit={shloka ? handleUpdate : handleCreate}>
             <div className="form-group">
-                <label htmlFor="name" className={shloka ? "optional" : "required"}>Shloka Name</label>
+                <label htmlFor="name" className={shloka ? "optional" : "required"}>{type} Name</label>
                 <input 
                 type="text" 
                 id="name" 
                 name="name"
-                placeholder="Enter shloka name" 
+                placeholder={`Enter name`}
                 onChange={handleChange}
                 value={formData.name}
                 />
@@ -101,7 +112,7 @@ export const ModalOverlay = ({ shloka, toggleModal }) => {
             </div>
 
             <div className="form-group">
-                <label htmlFor="link">Shloka Link</label>
+                <label htmlFor="link">{type} Link</label>
                 <input 
                 type="url" 
                 id="link" 
