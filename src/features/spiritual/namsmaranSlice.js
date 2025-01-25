@@ -22,42 +22,42 @@ function sortShlokas(trackedShlokasList) {
     });
 }
 
-const showUpdateNotificaion = (shloka, previousProgress) => {
+const showUpdateNotificaion = (shloka, previousProgress, hideNotification) => {
     if(shloka.daily_progress >= shloka.daily_target && shloka.daily_progress > previousProgress){
         showNotification(`Congratulations!!! \n You have completed todays target for ${shloka.name}`, 3000, "center", "custom-toast-popup")
     }
-    else{
+    else if(!hideNotification){
         showNotification(`Daily progress for ${shloka.name} updated to ${shloka.daily_progress} from ${previousProgress}`, 2500);
     }
 }
 
 //GET API Action
-export const fetchTrackedShlokas = createAsyncThunk('fetchTrackedShlokas', async(args) => {
+export const fetchTrackedNamsmarans = createAsyncThunk('fetchTrackedNamsmarans', async(args) => {
     const response = await fetchData(get_url(SHLOKAS_API), args);
     return response.json();
 })
 
 // POST API Action
-export const createShloka = createAsyncThunk('shlokas/createShloka', async (newShloka) => {
+export const createNamsmaran = createAsyncThunk('createNamsmaran', async (newShloka) => {
     const response = await postData(get_url(SHLOKAS_API), newShloka);
     return response.json();
 });
 
 // DELETE API Action
-export const deleteShloka = createAsyncThunk('deleteShloka', async (args) => {
+export const deleteNamsmaran = createAsyncThunk('deleteNamsmaran', async (args) => {
     const response = await deleteData(get_url(SHLOKA_API), args.id, args.queryParams);
     return response.json();
 });
 
 // UPDATE API Action
-export const updateShloka = createAsyncThunk('updateShloka', async (args) => {
+export const updateNamsmaran = createAsyncThunk('updateNamsmaran', async (args) => {
     const response = await updateData(get_url(SHLOKA_API), args.shloka_id, args.queryParams, args.updatedBody);
     return response.json();
 });
 
 
-export const shlokas = createSlice({
-    name: "shlokas",
+export const namsmaran = createSlice({
+    name: "namsmaran",
     initialState : {
         trackedShlokasList: [],
         renderedList: false,
@@ -68,14 +68,15 @@ export const shlokas = createSlice({
         date: null
     },
     reducers :{
-        updateShlokasDailyProgress(state, action){
-            const { id, updated_daily_progress, queryParams } = action.payload;
+        updateNamsmaranDailyProgress(state, action){
+            const { id, updated_daily_progress, queryParams, hideNotification } = action.payload;
             // Optimistically update the local state
             const shloka = state.trackedShlokasList.find(s => s.id === id);
             if (shloka) {
                 const previousProgress = shloka.daily_progress;
                 shloka.daily_progress = updated_daily_progress;
-                showUpdateNotificaion(shloka, previousProgress)
+                showUpdateNotificaion(shloka, previousProgress, hideNotification)
+                
                 // Trigger the API call after updating the state
                 const apiCall = async () => {
                     try {
@@ -96,10 +97,10 @@ export const shlokas = createSlice({
     },
     extraReducers: (builder) => {
         // GET API Reducers
-        builder.addCase(fetchTrackedShlokas.pending, (state, action) => {
+        builder.addCase(fetchTrackedNamsmarans.pending, (state, action) => {
             state.isLoading = true;
         });
-        builder.addCase(fetchTrackedShlokas.fulfilled, (state, action) => {
+        builder.addCase(fetchTrackedNamsmarans.fulfilled, (state, action) => {
             state.isLoading = false;
             state.trackedShlokasList = action.payload.data;
             state.renderedList = true;
@@ -108,32 +109,32 @@ export const shlokas = createSlice({
             state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
             state.date = action.payload.date;
         });
-        builder.addCase(fetchTrackedShlokas.rejected, (state, action) => {
+        builder.addCase(fetchTrackedNamsmarans.rejected, (state, action) => {
             state.error = action.payload;
             state.isLoading = false;
         })
 
         // POST API Reducers
-        builder.addCase(createShloka.pending, (state) => {
+        builder.addCase(createNamsmaran.pending, (state) => {
             state.isLoading = true;
         });
-        builder.addCase(createShloka.fulfilled, (state, action) => {
+        builder.addCase(createNamsmaran.fulfilled, (state, action) => {
             state.isLoading = false;
             state.successMessage = "Shloka created successfully!";
             state.trackedShlokasList = [...(state.trackedShlokasList || []), action.payload.data]; // Add new shloka to the list
             //sorted list
             state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
         });
-        builder.addCase(createShloka.rejected, (state, action) => {
+        builder.addCase(createNamsmaran.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.error.message;
         });
 
         // DELETE API Reducers
-        builder.addCase(deleteShloka.pending, (state) => {
+        builder.addCase(deleteNamsmaran.pending, (state) => {
             state.isLoading = true;
         });
-        builder.addCase(deleteShloka.fulfilled, (state, action) => {
+        builder.addCase(deleteNamsmaran.fulfilled, (state, action) => {
             state.isLoading = false;
             state.successMessage = "Shloka deleted successfully!";
             // remove shloka with id as given id from the list list
@@ -142,16 +143,16 @@ export const shlokas = createSlice({
             //sorted list
             state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
         });
-        builder.addCase(deleteShloka.rejected, (state, action) => {
+        builder.addCase(deleteNamsmaran.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.error.message;
         });
 
         // UPDATE API Reducers
-        builder.addCase(updateShloka.pending, (state) => {
+        builder.addCase(updateNamsmaran.pending, (state) => {
             state.isLoading = true;
         });
-        builder.addCase(updateShloka.fulfilled, (state, action) => {
+        builder.addCase(updateNamsmaran.fulfilled, (state, action) => {
             state.isLoading = false;
             state.successMessage = "Shloka Updated successfully!";
             // remove shloka with id as given id from the list list
@@ -165,7 +166,7 @@ export const shlokas = createSlice({
             //sorted list
             state.trackedShlokasList = sortShlokas(state.trackedShlokasList);
         });
-        builder.addCase(updateShloka.rejected, (state, action) => {
+        builder.addCase(updateNamsmaran.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.error.message;
         });
@@ -184,6 +185,6 @@ export const shlokas = createSlice({
     },
 });
 
-export const {updateShlokasDailyProgress} = shlokas.actions;
+export const {updateNamsmaranDailyProgress} = namsmaran.actions;
 
-export default shlokas.reducer;
+export default namsmaran.reducer;

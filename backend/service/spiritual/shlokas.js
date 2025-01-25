@@ -2,9 +2,10 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { DAILY_SHLOKAS_TRACKER, SHLOKAS } from "../../../utils/constants/collections.js";
 import { createEntityInDb } from "../../db/db.js";
 import { attachTimestamp, formatDate } from "../../helper/helper.js";
-import { DATE, DELETED_AT, USER_ID } from "../../../utils/constants/schema/shlokas.js";
+import { DATE, DELETED_AT, TYPE, USER_ID } from "../../../utils/constants/schema/shlokas.js";
 import { db } from "../../../src/config/firebase.js";
 import { convertToIstTimestamp } from "../../../backend/utils/utils.js";
+import { SHLOKA } from "../../utils/constants/constants.js";
 
 export async function createShloka(body){
     try{
@@ -18,7 +19,7 @@ export async function createShloka(body){
             user_id: body.user_id,
             shloka_id: shlokaResponse.docId,
             daily_progress: 0,
-            date: convertToIstTimestamp(date),
+            date: convertToIstTimestamp(date)
         }
         attachTimestamp(dailyShlokaTrackerData);
         const dailyTrackedShlokaResponse = await createEntityInDb(
@@ -47,21 +48,34 @@ export async function createShloka(body){
     }
 }
 
-export async function getTrackedShlokas(user_id, date){
+export async function getTrackedShlokas(user_id, date, type){
     try{
         date = convertToIstTimestamp(date);
+        const conditions = [
+          where(USER_ID, '==', user_id),
+          where(DELETED_AT, '==', null), //TODO: make this as deleted_at <= current_date, delted_at > created_at, think on this if this is necessary?
+        ];
+        // Conditionally add the `TYPE` filter
+        if (type !== SHLOKA) {
+          conditions.push(where(TYPE, '==', type));
+        }
         const shlokasQuery = query(
             collection(db, SHLOKAS),
-            where(USER_ID, '==', user_id),
-            where(DELETED_AT, '==', null) //TODO: make this as deleted_at <= current_date, delted_at > created_at, think on this if this is necessary?
+            ...conditions
         );
         const shlokasList = await getDocs(shlokasQuery);
         // Create an array of all shlokas
-        const shlokas = [];
+        let shlokas = [];
+
         shlokasList.forEach(doc => {
             shlokas.push({ id: doc.id, ...doc.data() });
         });
 
+        if (type === SHLOKA) {
+          shlokas = shlokas.filter((shloka) => {
+            return shloka.type === SHLOKA || !shloka.hasOwnProperty('type') || shloka.type === null;
+          });
+        }
         if(shlokas.length == 0){
             return {
                 success: true,
@@ -70,12 +84,12 @@ export async function getTrackedShlokas(user_id, date){
                 size: 0
             }
         }
-        const trackedShlokasResp = await dailyShloks(user_id, date, shlokas);
+        const trackedShlokasResp = await dailyShloks(user_id, date, shlokas, type);
         if(!trackedShlokasResp.success){
             return trackedShlokasResp;
         }
         const trackedShlokas = trackedShlokasResp.data;
-        const mergedShlokas = mergeShlokasAndTrackedShlokas(shlokas, trackedShlokas);
+        const mergedShlokas = mergeShlokasAndTrackedShlokas(shlokas, trackedShlokas, type);
         return {
             success: true,
             message: "tracked shlokas fetched successfully!",
@@ -94,9 +108,9 @@ export async function getTrackedShlokas(user_id, date){
     }
 }
 
-async function dailyShloks(user_id, date, shlokas){
+async function dailyShloks(user_id, date, shlokas, type){
     try {
-        const dailyShloks = await checkIfDailyShlokaPresent(user_id, date);
+        const dailyShloks = await checkIfDailyShlokaPresent(user_id, date, shlokas, type);
         if(!dailyShloks.success){
             return dailyShloks;
         }
@@ -128,17 +142,19 @@ async function dailyShloks(user_id, date, shlokas){
     }
 }
 
-async function checkIfDailyShlokaPresent(user_id, date){
+async function checkIfDailyShlokaPresent(user_id, date, shlokas, type){
     try{
+        const shloka_ids = shlokas.map((shloka) => shloka.id);
         const shlokasTrackerQuery = query(
             collection(db, DAILY_SHLOKAS_TRACKER),
             where(USER_ID, '==', user_id),
-            where(DATE, '==', date)
+            where(DATE, '==', date),
+            where('shloka_id', 'in', shloka_ids)
         );
         const dailyShlokasTrackerSnapshot = await getDocs(shlokasTrackerQuery);
         // Check if there are any documents in the snapshot
         if (!dailyShlokasTrackerSnapshot.empty) {
-            console.log(`Shloka exists for the given user: ${user_id} and date: ${date}`);
+            console.log(`Shloka exists for the given user: ${user_id}, date: ${date} and type: ${type}`);
             const data = dailyShlokasTrackerSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
             // A document exists for the given user and date
             return {
@@ -195,7 +211,7 @@ async function createDailyShlokas(user_id, date, shlokas){
     }
 }
 
-function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas) {
+function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas, type) {
     // Iterate over tracked_shlokas to create the merged result
     const mergedData = trackked_shlokas.map(tracked => {
       // Find the corresponding shloka from shloks
@@ -212,7 +228,8 @@ function mergeShlokasAndTrackedShlokas(shloks, trackked_shlokas) {
           created_at: shloka.created_at || null,
           updated_at: shloka.updated_at || null,
           daily_progress: tracked.daily_progress,
-          description: shloka.description
+          description: shloka.description,
+          type: type
         };
       }
   

@@ -3,6 +3,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 import "./util.css"
 
 const API_HOST = process.env.REACT_APP_API_HOST || "http://localhost:3000";
+// const API_HOST = 'http://192.168.1.5:3000'
 export function get_url(api){
     console.log("env host:", process.env.REACT_APP_API_HOST)
     return API_HOST + api;
@@ -39,6 +40,12 @@ export const getISTDate = () => {
 }
 
 export const excludeFields = (obj, fieldsToExclude) => {
-    const { [fieldsToExclude[0]]: _, [fieldsToExclude[1]]: __, ...rest } = obj;
-    return rest;
+  const rest = { ...obj };  // Create a copy of the object
+
+  // Loop through the fields to exclude and delete each from the copy
+  fieldsToExclude.forEach(field => {
+      delete rest[field];
+  });
+
+  return rest;
 };

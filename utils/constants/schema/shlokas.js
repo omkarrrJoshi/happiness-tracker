@@ -9,6 +9,7 @@ export const DESCRIPTION = 'description';
 
 // shlokas
 export const DAILY_TARGET = 'daily_target';
+export const TYPE = 'type';
 // daily tracked shlokas
 export const SHLOKA_ID = 'shloka_id';
 export const DAILY_PROGRESS = 'daily_progress';

@@ -6,12 +6,14 @@ import { getISTDate, showNotification } from '../utils/util';
 import { deleteShloka } from '../features/spiritual/shlokasSlice';
 import { LoadingOverlay } from './loading-overlay';
 import { useNavigate } from 'react-router-dom';
+import { NAMSMARAN, SHLOKA } from '../utils/constants/constants';
+import { deleteNamsmaran } from '../features/spiritual/namsmaranSlice';
 
 
-export const ShlokaTracker = ({shloka}) =>{
+export const ShlokaTracker = ({shloka, type}) =>{
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
-    const { isLoading, successMessage } = useSelector((state) => state.shlokas);
+    const { isLoading, successMessage } = useSelector((state) => getShlokasByType(state, type));
     const navigate = useNavigate();
 
     const handleDelete = async () => {
@@ -22,7 +24,8 @@ export const ShlokaTracker = ({shloka}) =>{
                 shloka_id: shloka.shloka_id, 
                 user_id: user.uid
             }
-            const result = await dispatch(deleteShloka({queryParams: queryParams, id: shloka.id}));
+            const action = type === 'namsmaran' ? deleteNamsmaran : deleteShloka;
+            const result = await dispatch(action({ queryParams: queryParams, id: shloka.id }));
             if (result.meta.requestStatus === 'fulfilled') {
                 showNotification(successMessage, 2000); // Show success message
             }
@@ -48,7 +51,7 @@ export const ShlokaTracker = ({shloka}) =>{
                 }
             </section>
             <section className='col-6' onClick={handleNavigation} style={{ cursor: 'pointer' }}>{shloka.name}</section>
-            <section className='col-3'> <CounterBox shloka={shloka}/></section>
+            <section className='col-3'> <CounterBox shloka={shloka} type={type}/></section>
             <section className='col-1 daily_target'>{shloka.daily_target}</section>
             <section className='col-1' onClick={handleDelete}>
                 <img 
@@ -61,14 +64,14 @@ export const ShlokaTracker = ({shloka}) =>{
     );
 }
 
-export const ShlokaTrackerList = () => {
-    const shlokas = useSelector((state) => state.shlokas);
+export const ShlokaTrackerList = ({type}) => {
+    const shlokas = useSelector((state) => getShlokasByType(state, type));
     const trackedShlokasList = shlokas.trackedShlokasList;
     return (
         <section className = "shloka-tracker-list">
             
             {
-                !shlokas.loadedInitially && <div className='outer-loader'><div className='loader'></div></div>
+                !shlokas.loadedInitially && shlokas.isLoading && <div className='outer-loader'><div className='loader'></div></div>
             }
             {
                 (trackedShlokasList.length === 0 && !shlokas.isLoading) && <div>
@@ -89,6 +92,7 @@ export const ShlokaTrackerList = () => {
                             <ShlokaTracker 
                                 key={shloka.id} 
                                 shloka={shloka}
+                                type={type}
                             />
                         )}
                     </div>
@@ -98,3 +102,14 @@ export const ShlokaTrackerList = () => {
     )
     
 }
+
+const getShlokasByType = (state, type) => {
+  switch (type) {
+      case NAMSMARAN:
+          return state.namsmaran;
+      case SHLOKA:
+          return state.shlokas;
+      default:
+          return state.shlokas;
+  }
+};

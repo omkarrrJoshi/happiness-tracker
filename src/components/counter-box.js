@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { updateDailyProgress } from '../features/spiritual/shlokasSlice';
+import { updateShlokasDailyProgress } from '../features/spiritual/shlokasSlice';
 import { store } from '../redux/store';
 import './counter-box.css'
+import { SHLOKA } from '../utils/constants/constants';
+import { updateNamsmaranDailyProgress } from '../features/spiritual/namsmaranSlice';
 
-export const CounterBox = ({shloka}) =>{
+export const CounterBox = ({shloka, type}) =>{
   const [isCounterModalOpen, setIsCounterModalOpen] = useState(false);
   const increment = () => {
-    store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress + 1}));
+    store.dispatch(updateShlokasDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress + 1}));
   }
   const decrement = () => {
     if(shloka.daily_progress > 0){
-      store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress - 1}));
+      store.dispatch(updateShlokasDailyProgress({id: shloka.id, updated_daily_progress: shloka.daily_progress - 1}));
     }
   }
 
@@ -19,7 +21,8 @@ export const CounterBox = ({shloka}) =>{
       alert("progress can't be empty or 0");
       return; // Prevent form submission
     }
-    store.dispatch(updateDailyProgress({id: shloka.id, updated_daily_progress: progress}));
+    const action = type === 'namsmaran' ? updateNamsmaranDailyProgress : updateShlokasDailyProgress;
+    store.dispatch(action({id: shloka.id, updated_daily_progress: progress}));
     toggleCounterModal();
   }
 
@@ -30,13 +33,13 @@ export const CounterBox = ({shloka}) =>{
   return (
     <div>
       <div className="counter-box">
-        <button className="counter-btn-negative" onClick={decrement}>
+        {type === SHLOKA && <button className="counter-btn-negative" onClick={decrement}>
           -
-        </button>
-        <div className="counter-small-box" onClick={toggleCounterModal}>{shloka.daily_progress}</div>
-        <button className="counter-btn-positive" onClick={increment}>
+        </button>}
+        <div className={`counter-small-box ${type}-counter-small-box`} onClick={toggleCounterModal}>{shloka.daily_progress}</div>
+        {type === SHLOKA && <button className="counter-btn-positive" onClick={increment}>
           +
-        </button>
+        </button>}
       </div>
       {isCounterModalOpen && 
         <div className="modal-overlay">

@@ -38,6 +38,59 @@
   color: #555;
   line-height: 1.5;
   border: 1px solid #ddd;
+  align-content: center;
+  text-align: center;
+}
+
+.namsmaran-description-text {
+  min-height: 300px;
+  cursor: pointer;
+}
+
+.floating-progress {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px;
+  font-size: 1.2rem;
+  background-color: rgba(0, 0, 0, 0.5); /* Darker background */
+  color: white;
+  border-radius: 8px;
+  opacity: 1;
+  margin-bottom: 50px; /* Add space between progress and description */
+  animation: floatAndDisappear 3s forwards;
+}
+
+.floating-description {
+  position: fixed;
+  top: 35%; /* Adjust top value to be below the progress */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px;
+  font-size: 1.2rem;
+  background-color: rgba(0, 0, 0, 0.7); /* Lighter background for description */
+  color: white;
+  border-radius: 8px;
+  opacity: 1;
+  animation: floatAndDisappear 3s forwards;
+  align-content: center;
+  text-align: center;
+}
+
+@keyframes floatAndDisappear {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -60%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -70%) scale(1.2);
+  }
 }
 
 .shloka-link {
@@ -151,7 +204,7 @@
   font-size: 1.2rem;
   font-weight: 400;
   color: #666;
-  text-align: right; /* Align the daily target to the right */
+  /* text-align: right; Align the daily target to the right */
   padding-left: 20px; /* Space between the name and daily target */
 }
 
@@ -168,7 +221,27 @@
 
   .shloka-details-header .daily-target {
       font-size: 1.1rem; /* Reduce size for mobile */
-      text-align: left;
+      /* text-align: left; */
       padding-left: 0; /* Remove left padding on smaller screens */
   }
+}
+
+.target-and-progress {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.daily-target {
+  width: 50%;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
 }

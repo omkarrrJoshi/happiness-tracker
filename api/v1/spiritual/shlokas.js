@@ -3,6 +3,7 @@ import { createShloka, getTrackedShlokas } from "../../../backend/service/spirit
 import { CREATE_SHLOKA } from "../../../backend/utils/constants/api_actions.js";
 import { validate } from "../../../backend/validations/request_body.js";
 import { nullValidation } from "../../../backend/validations/request_params.js";
+import { SHLOKA } from "../../../backend/utils/constants/constants.js";
 
 export default async function handler(req, res) {
     // create shloka
@@ -32,13 +33,18 @@ export default async function handler(req, res) {
 
     else if (req.method === GET){
         const { user_id, date } = req.query;
+        let { type } = req.query;
+        
+        if(type === null || type === undefined){
+          type = SHLOKA;
+        }
         const isValid = nullValidation({user_id, date});
         if (!isValid.valid) {
             return res.status(400).json({ error: 'Invalid request params', details: isValid.message });
         }
 
         try{
-            const response = await getTrackedShlokas(user_id, date);
+            const response = await getTrackedShlokas(user_id, date, type);
             if(response.success){
                 res.status(200).json(
                     {
