@@ -5,6 +5,7 @@ import { attachTimestamp } from "../../../helper/helper.js";
 import { db } from "../../../../src/config/firebase.js";
 import { ERROR_404_NOT_FOUND } from "../../../utils/constants/error_code.js";
 import { getMonthFromDate } from "../../../utils/utils.js";
+import { TOTAL_SHLOKAS } from "../../../../utils/constants/schema/shlokas.js";
 
 export async function createParayanaChapterService(body){
   try{
@@ -24,33 +25,10 @@ export async function createParayanaChapterService(body){
     if(!chapterResponse.success){
       return response
     }
-
+    chapter.id = chapterResponse.docId;
     //create chapter tracker
     const monthlyTarget = parayana.monthly_target;
-    const trackedParayanaChapters = [];
-    for(let i = 0; i < monthlyTarget; i++){
-      const parayanaChapterTracker = {
-        name: chapter.name,
-        progress_id: i + 1,
-        month: getMonthFromDate(date),
-        parayana_chapter_id: chapterResponse.docId,
-        parayana_id: parayanaId,
-        completed: false,
-        user_id: chapter.user_id,
-      }
-      attachTimestamp(parayanaChapterTracker);
-      const response = await createEntityInDb(parayanaChapterTracker, PARAYANA_CHAPTER_TRACKER, "parayana chapter tracker");
-      if(!response.success){
-        return response
-      }
-      trackedParayanaChapters.push(
-        {
-          id: response.docId,
-          name: chapter.name,
-          ...parayanaChapterTracker
-        }
-      )
-    }
+    const trackedParayanaChapters = await createParyanaChapterTracker(monthlyTarget, chapter, parayanaId, getMonthFromDate(date));
 
     return {
       success: true,
@@ -92,4 +70,36 @@ async function getParayanaById(id){
       message: error.message || "An error occured in createParayanaService.",
     };
   }
+}
+
+export async function createParyanaChapterTracker(monthlyTarget, chapter, parayanaId, month){
+  const trackedParayanaChapters = [];
+  for(let i = 0; i < monthlyTarget; i++){
+    const parayanaChapterTracker = {
+      name: chapter.name,
+      progress_id: i + 1,
+      month: month,
+      parayana_chapter_id: chapter.id,
+      parayana_id: parayanaId,
+      completed: false,
+      user_id: chapter.user_id,
+      total_shlokas: chapter.total_shlokas,
+    }
+    attachTimestamp(parayanaChapterTracker);
+    if(chapter.created_at){
+      parayanaChapterTracker.created_at = chapter.created_at;
+    }
+    const response = await createEntityInDb(parayanaChapterTracker, PARAYANA_CHAPTER_TRACKER, "parayana chapter tracker");
+    if(!response.success){
+      return response
+    }
+    trackedParayanaChapters.push(
+      {
+        id: response.docId,
+        name: chapter.name,
+        ...parayanaChapterTracker
+      }
+    )
+  }
+  return trackedParayanaChapters;
 }

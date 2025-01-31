@@ -5,6 +5,7 @@ import { attachTimestamp } from "../../../helper/helper.js";
 import { CREATED_AT, DELETED_AT, MONTH, PARAYANA_ID, PROGRESS_ID, USER_ID } from "../../../../utils/constants/schema/shlokas.js";
 import { db } from "../../../../src/config/firebase.js";
 import { getMonthFromDate } from "../../../utils/utils.js";
+import { createParyanaChapterTracker } from "./parayana_chapters.js";
 
 export async function getParayanasService(user_id, date){
   try{
@@ -25,7 +26,7 @@ export async function getParayanasService(user_id, date){
         progress: 0
       };
     
-      // Query for parayana chapters
+      // Query for parayana chapters tracker
       const parayanaChaptersTrackerQuery = query(
         collection(db, PARAYANA_CHAPTER_TRACKER),
         // where(USER_ID, '==', user_id),
@@ -35,10 +36,13 @@ export async function getParayanasService(user_id, date){
         // orderBy(PROGRESS_ID, "asc")
       );
       const parayanaChaptersTrackerSnapshot = await getDocs(parayanaChaptersTrackerQuery);
-      const parayanaChaptersTracker = parayanaChaptersTrackerSnapshot.docs.map(chapterTrackerDoc => ({
+      let parayanaChaptersTracker = parayanaChaptersTrackerSnapshot.docs.map(chapterTrackerDoc => ({
         id: chapterTrackerDoc.id,
         ...chapterTrackerDoc.data(),
       }))
+      if(parayanaChaptersTracker.length === 0){
+        parayanaChaptersTracker = await createAndGetParayanaChapterTracker(parayana, month);
+      }
       parayana.tracked_parayana_chapters = parayanaChaptersTracker;
       parayanas.push(parayana);
     };
@@ -60,6 +64,33 @@ export async function getParayanasService(user_id, date){
         message: error.message || "An error occured in getParayanasService.",
     };
   }
+}
+
+async function createAndGetParayanaChapterTracker(parayana, month){
+  const parayanaChaptersQuery = query(
+    collection(db, PARAYANA_CHAPTERS),
+    // where(USER_ID, '==', user_id),
+    where(PARAYANA_ID, '==', parayana.id),
+    where(DELETED_AT, '==', null),
+    // orderBy(PROGRESS_ID, "asc")
+  );
+  const parayanaChaptersSnapshot = await getDocs(parayanaChaptersQuery);
+  const parayanaChapters = parayanaChaptersSnapshot.docs.map(chapterDoc => ({
+    id: chapterDoc.id,
+    ...chapterDoc.data(),
+  }))
+
+  if(parayanaChapters.length === 0){
+    return [];
+  }
+  console.log(`chapter tracker doesn't exist for month ${month}, creating it for parayana: ${parayana.name}`);
+  const trackedParayanaChapters = []
+  for(let i = 0; i < parayanaChapters.length; i++) {
+    const chapter = parayanaChapters[i];
+    const tracked = await createParyanaChapterTracker(parayana.monthly_target, chapter, parayana.id, month);
+    trackedParayanaChapters.push(...tracked);
+  }
+  return trackedParayanaChapters;
 }
 
 export async function createParayanaService(body){

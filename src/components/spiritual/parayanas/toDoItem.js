@@ -15,6 +15,7 @@ export const TodoItem = ({task, onToggle, onDelete}) => {
                   onChange={() => toggleCompleted(task.id) }
           />
           <span className={task.completed ? 'completed' : ''} onClick={() => toggleCompleted(task.id)}>{task.name}</span>
+          <span className={task.completed ? 'completed' : ''}>total shlokas: {task.total_shlokas ? task.total_shlokas : '_'}</span>
           {/* <button onClick={() => onDelete(task.id)}>Delete</button> */}
       </div>
   )
